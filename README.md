@@ -9,4 +9,7 @@ Add the following entry in your `configuration.yaml`:
 
 ```yaml
 weishaupt_wcm_com:
+  host: 192.168.x.xx
+  username: "your-user-name"
+  password: "your-secret-key"
 ```
