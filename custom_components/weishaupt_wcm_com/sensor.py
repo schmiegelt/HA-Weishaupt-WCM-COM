@@ -5,13 +5,18 @@ import logging
 from datetime import timedelta, datetime
 
 from .const import DOMAIN
-from .const import OILCONSUMPTION_KEY
+from .const import OIL_CONSUMPTION_KEY
+from .const import OUTSIDE_TEMPERATURE_KEY
+from .const import LOAD_SETTING_KEY
+from .const import WARM_WATER_TEMPERATURE_KEY 
+from .const import FLOW_TEMPERATURE_KEY
+from .const import FLUE_GAS_TEMPERATURE_KEY
 
 from . import WeishauptBaseEntity
 
 
 
-SCAN_INTERVAL = timedelta(minutes=1)
+SCAN_INTERVAL = timedelta(minutes=10)
 
 
 SENSOR_TYPES = {
@@ -25,23 +30,35 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     # We only want this platform to be set up via discovery.
     if discovery_info is None:
         return
-    add_entities([WeishauptSensor(hass, config)])
+    add_entities(
+        [
+            WeishauptSensor(hass, config, OIL_CONSUMPTION_KEY, "l"),
+            WeishauptSensor(hass, config, OUTSIDE_TEMPERATURE_KEY, "C"),
+            WeishauptSensor(hass, config, LOAD_SETTING_KEY, "C"),
+            WeishauptSensor(hass, config, WARM_WATER_TEMPERATURE_KEY, "C"),
+            WeishauptSensor(hass, config, FLOW_TEMPERATURE_KEY, "C"),
+            WeishauptSensor(hass, config, FLUE_GAS_TEMPERATURE_KEY, "C")
+        ]
+    )
 
 
 class WeishauptSensor(WeishauptBaseEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, hass, config):
+    def __init__(self, hass, config, sensor_name, sensor_unit):
         super().__init__(hass, config)
         """Initialize the sensor."""
         self._state = None
         self._data = {}
         self._config = config
 
+        self._name = sensor_name
+        self._unit = sensor_unit
+
     @property
     def name(self):
         """Return the name of the sensor."""
-        return 'Oil Meter'
+        return self._name
 
     @property
     def state(self):
@@ -51,7 +68,7 @@ class WeishauptSensor(WeishauptBaseEntity):
     @property
     def unit_of_measurement(self):
         """Return the unit of measurement."""
-        return 'l'
+        return self._unit
 
     def update(self):
         """Fetch new state data for the sensor.
@@ -61,6 +78,6 @@ class WeishauptSensor(WeishauptBaseEntity):
         _LOGGER.debug("Updating Sensor")
         super().update()
         try: 
-            self._state = self.api().getData()[OILCONSUMPTION_KEY]
+            self._state = self.api().getData()[self._name]
         except:
             self._state = None

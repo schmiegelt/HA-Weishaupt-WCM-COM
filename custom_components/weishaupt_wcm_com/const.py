@@ -2,4 +2,9 @@
 
 DOMAIN = 'weishaupt_wcm_com'
 
-OILCONSUMPTION_KEY = "Oil Meter"
+OIL_CONSUMPTION_KEY = "Oil Meter"
+OUTSIDE_TEMPERATURE_KEY = "Outside Temperature"
+LOAD_SETTING_KEY = "Load Setting"
+WARM_WATER_TEMPERATURE_KEY = "Warm Water Temperature" 
+FLOW_TEMPERATURE_KEY =  "Flow Temperature" 
+FLUE_GAS_TEMPERATURE_KEY = "Flue Gas Temperature" 
