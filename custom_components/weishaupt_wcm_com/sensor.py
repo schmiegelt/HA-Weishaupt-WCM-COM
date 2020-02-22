@@ -5,6 +5,8 @@ import logging
 from datetime import timedelta, datetime
 
 from .const import DOMAIN
+from .const import NAME_PREFIX
+
 from .const import OIL_CONSUMPTION_KEY
 from .const import OUTSIDE_TEMPERATURE_KEY
 from .const import LOAD_SETTING_KEY
@@ -16,7 +18,7 @@ from . import WeishauptBaseEntity
 
 
 
-SCAN_INTERVAL = timedelta(minutes=10)
+SCAN_INTERVAL = timedelta(seconds=30)
 
 
 SENSOR_TYPES = {
@@ -33,11 +35,11 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
     add_entities(
         [
             WeishauptSensor(hass, config, OIL_CONSUMPTION_KEY, "l"),
-            WeishauptSensor(hass, config, OUTSIDE_TEMPERATURE_KEY, "C"),
-            WeishauptSensor(hass, config, LOAD_SETTING_KEY, "C"),
-            WeishauptSensor(hass, config, WARM_WATER_TEMPERATURE_KEY, "C"),
-            WeishauptSensor(hass, config, FLOW_TEMPERATURE_KEY, "C"),
-            WeishauptSensor(hass, config, FLUE_GAS_TEMPERATURE_KEY, "C")
+            WeishauptSensor(hass, config, OUTSIDE_TEMPERATURE_KEY, "°C"),
+            WeishauptSensor(hass, config, LOAD_SETTING_KEY, "kW"),
+            WeishauptSensor(hass, config, WARM_WATER_TEMPERATURE_KEY, "°C"),
+            WeishauptSensor(hass, config, FLOW_TEMPERATURE_KEY, "°C"),
+            WeishauptSensor(hass, config, FLUE_GAS_TEMPERATURE_KEY, "°C")
         ]
     )
 
@@ -58,7 +60,7 @@ class WeishauptSensor(WeishauptBaseEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return self._name
+        return NAME_PREFIX + self._name
 
     @property
     def state(self):

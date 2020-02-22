@@ -1,6 +1,7 @@
 """Constants for the Weishaupt WCM-COM integration."""
 
 DOMAIN = 'weishaupt_wcm_com'
+NAME_PREFIX = "Weishaupt "
 
 OIL_CONSUMPTION_KEY = "Oil Meter"
 OUTSIDE_TEMPERATURE_KEY = "Outside Temperature"
