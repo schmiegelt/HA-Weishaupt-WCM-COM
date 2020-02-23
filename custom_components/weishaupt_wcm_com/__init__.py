@@ -8,6 +8,7 @@ from weishaupt_wcm_com import heat_exchanger
 import json
 import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
+from homeassistant.util import Throttle
 
 
 from homeassistant.const import (
@@ -16,10 +17,12 @@ from homeassistant.const import (
     CONF_USERNAME,
 )
 
+MIN_TIME_BETWEEN_UPDATES = timedelta(seconds=10)
+
 _LOGGER = logging.getLogger(__name__)
 
 WEISHAUPT_PLATFORMS = ['sensor']
-SCAN_INTERVAL = timedelta(seconds=100)
+scan_interval = timedelta(seconds=20)
 
 
 CONFIG_SCHEMA = vol.Schema({
@@ -61,14 +64,13 @@ class WeishauptBaseEntity(Entity):
         This is the only method that should fetch new data for Home Assistant.
         """
         _LOGGER.debug("Super Updating")
-
-        #SERVER = "http://192.168.0.33" 
-        #USER = "admin"
-        #PASSWORD = "eAFh7J9uZJ3Afh" 
         self._api.update()
 
 
 class WeishauptAPI:
+
+    SCAN_INTERVAL = timedelta(seconds=30)
+
     def __init__(self, host, username, password):
         self._host = host
         self._username = username
@@ -78,11 +80,13 @@ class WeishauptAPI:
     def getData(self):
         return self._data
 
+    # The actual fetch of information, since the wcm-com module can only handle one connection at a time, this has to be throttled
+    @Throttle(MIN_TIME_BETWEEN_UPDATES)
     def update(self):
         result = heat_exchanger.process_values(self._host, self._username, self._password)
-        _LOGGER.debug(result)
+        _LOGGER.debug("Fetching new data")
         if result != None:
             self._data = json.loads(result)
         else:
-            _LOGGER.debug("Cannot Update Data")
+            _LOGGER.warning("Cannot Update Data")
     

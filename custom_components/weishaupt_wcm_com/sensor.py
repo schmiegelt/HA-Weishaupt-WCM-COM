@@ -18,9 +18,6 @@ from . import WeishauptBaseEntity
 
 
 
-SCAN_INTERVAL = timedelta(seconds=30)
-
-
 SENSOR_TYPES = {
     "oil_meter"
 }
